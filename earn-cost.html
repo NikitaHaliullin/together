@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <title>SmartBalance</title>
+        <link rel="stylesheet" href="global.css">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <a href="#" class="logo"><img width="50px" height="50px" src="image/photo_2025-05-31_21-30-19.jpg"></a>
+            <nav>
+                <ul>
+                    <li><a href="1_main.html">Головна</a></li>
+                    <li><a href="earn-cost.html">Заробіток\витрати &blacktriangledown;</a></li>
+                    <li><a href="#">створення-категорії</a></li>
+                    <li><a href="#">Войти</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div style="display: flex; justify-content: space-around;">
+                <div>
+                    <div>
+                        <div class="box" style="display: flex; justify-content: space-evenly;">
+                            <div>
+                                <button id="earn_category" style="padding: 17px 35px;">заробіток</button>
+                            </div>
+                            <div>
+                                <button id="cost_category" style="padding: 17px 37px;">витрати</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="background: #3a251c; color: #cbb138; margin-bottom: 50px; margin-top: 80px; border: 5px solid #FF5B00;
+                        border-radius: 25px; padding: 0.5% 0%; align-items: center; text-align: center;">
+                            <h2 style="color: #cbb138; padding: 15px">Так тримати!</h2>
+                            <div style="display: flex; padding-top: 45px">
+                                <div>
+                                    <div style="width: 200px; height: 20px; background: #0f0; margin: 20px; border-radius: 20px; color: #0f0;">
+                                        ss
+                                    </div>
+                                    <div style="width: 160px; height: 20px; background: #f00; margin: 20px; border-radius: 20px; color: #f00">
+                                        ss
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="margin: 12px;">
+                                        <h3 style="color: #0f0">Заробіток</h3>
+                                    </div>
+                                    <div style="margin: 12px;">
+                                        <h3 style="color: #f00">Витрати</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding: 10px">
+                                <h2 style="color: #cbb138">Добийся своєї цілі</h2>
+                                <h2 style="color: #cbb138">як найшвилше!</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="circle">
+                    <h2 id="cost_money" style="margin-top: 65px; color: #ce381a">0 ₴</h2>
+                    <h1 id="sum_money" style="padding: 30px 0px;color: #cbb138">2394578 ₴</h1>
+                    <h2 id="earn_money" style="color: #35981a">0 ₴</h2>
+                </div>
+                <div>
+                    <div class="box" style="display: flex; justify-content: space-evenly;">
+                        <div>
+                            <button style="padding: 0px 35px; font-size: 40px;">←</button>
+                        </div>
+                        <div>
+                            <button style="padding: 0px 35px; font-size: 40px;">→</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="margin-bottom: 50px; margin-top: 80px; border: 5px solid #FF5B00;
+                                    border-radius: 25px; padding: 0.5% 0%; background: #A67C52; align-items: center;">
+
+                            <h2 style="color: #632706; text-align: center;">Створення категорій</h2>
+                            <div style="display: block; flex-direction: column; padding: 20px;">
+                                <div style="display: block;">
+                                    <label for="category_name">Категорія*</label>
+                                    <div style="padding-top: 10px;">
+                                        <input style="margin-bottom: 20px; font-size: 20px; border-radius: 10px; color: black" type="text" id="name" required>
+                                    </div>
+                                </div>
+                                <div style="display: block;">
+                                    <label for="category_sum">Сумма*</label>
+                                    <div style="padding-top: 10px;">
+                                        <input style="margin-bottom: 20px; font-size: 20px; border-radius: 10px; color: black" type="number" id="sum" required>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-around;">
+                                    <button id="earn_category_create" style="background: #0f0;">Заробіток</button>
+                                    <button id="cost_category_create" style="background: #f00;">Витрати</button>
+                                </div>
+                            </div>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+            <div id="all_category" style="display: flex; justify-content: center;">
+                <div id="earn_category_line">
+                    <div id="insaid_earn" style="display: flex; justify-content: center; flex-direction: row;">
+                        <div class="category">
+                            <h3 id="name_category">Категорія</h3>
+                            <img id="img" src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
+                            <h2 id="money" style="color: #05930e;">+1600</h2>
+                        </div>
+                    </div>
+                </div>
+                <div id="cost_category_line">
+                    <div id="insaid_cost" style="display: flex; justify-content: center; flex-direction: row;">
+                        <div class="category">
+                            <h3>Категорія</h3>
+                            <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
+                            <h2 style="color: #05930e;">+1600</h2>
+                        </div>
+                        <div class="category">
+                            <h3>Категорія</h3>
+                            <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
+                            <h2 style="color: #05930e;">+1600</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="js.js"></script>
+    </body>
+</html>

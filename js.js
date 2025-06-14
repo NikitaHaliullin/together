@@ -15,6 +15,9 @@ let img = document.getElementById('img')
 let money = document.getElementById('money')
 
 let trust = true
+let button_trust = false
+let change_earn = 0
+let change_cost = 0
 cost_category_line.style.display = "none"
 let name_list = []
 let sum_category = 0
@@ -35,8 +38,10 @@ earn_category.addEventListener('click', function () {
 })
 
 cost_category_create.addEventListener('click', function () {
+    let delete_button = document.querySelector('.delete')
     let name = document.getElementById('name')
     let sum = document.getElementById('sum')
+    let category_name = name.value
     sum_category = sum.value
 
     if (name.value.length == 0 || sum.value.length == 0) {
@@ -52,7 +57,6 @@ cost_category_create.addEventListener('click', function () {
         categories[name.value] += (+sum.value)
         cost_total += (+sum_category)
         sum_total -= (+sum_category)
-        console.log(sum_total)
         cost_money.innerHTML = `-${cost_total} ₴`
     
         let Elem = document.getElementById(`${name.value}`)
@@ -60,20 +64,40 @@ cost_category_create.addEventListener('click', function () {
     
     } else if (trust == true  && !insaid_earn.querySelector(`#${name.value}`)) {
         categories[name.value] = (+sum.value)
-    
-        let category = document.createElement('div')
-        category.classList.add('category')
-        category.innerHTML = `
-            <h3>${name.value}</h3>
-            <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
-            <h2 id="${name.value}" style="color: #ce381a;">-${categories[name.value]} ₴</h2>
-        `
+        change_cost += 1
+        let id = `category_cost_${change_cost}`
+
+        let both_category = document.createElement('div')
+        both_category.id = id
+        both_category.style.display = "flex"
+        both_category.style.flexDirection = "column"
+        both_category.innerHTML = `
+            <button class="delete">
+                delete
+            </button>
+            <div class="category">
+                <h3>${name.value}</h3>
+                <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
+                <h2 id="${name.value}" style="color: #ce381a;">-${categories[name.value]} ₴</h2>
+            </div>`
 
         cost_total += (+sum_category)
         sum_total -= (+sum_category)
-        console.log(sum_total)
         cost_money.innerHTML = `-${cost_total} ₴`
-        insaid_cost.appendChild(category)
+
+        both_category.querySelector('.delete').addEventListener('click', function () {
+            document.getElementById(id).remove()
+
+            cost_total -= categories[category_name]
+            sum_total += categories[category_name]
+            sum_money.innerHTML = `${sum_total} ₴`
+            console.log(sum_total)
+            cost_money.innerHTML = `-${cost_total} ₴`
+            name_list = name_list.filter(item => item !== category_name)
+
+        })
+
+        insaid_cost.appendChild(both_category)
     } else (
         alert('Цю категорію неможна створити тут!')
     )
@@ -94,6 +118,7 @@ cost_category_create.addEventListener('click', function () {
 earn_category_create.addEventListener('click', function () {
     let name = document.getElementById('name')
     let sum = document.getElementById('sum')
+    let category_name = name.value
     sum_category = sum.value
 
     if (name.value.length == 0 || sum.value.length == 0) {
@@ -109,28 +134,46 @@ earn_category_create.addEventListener('click', function () {
         categories[name.value] += (+sum.value)
         earn_total += (+sum_category)
         sum_total += (+sum_category)
-        console.log(sum_total)
         earn_money.innerHTML = `+${earn_total} ₴`
     
         let Elem = document.getElementById(`${name.value}`)
         if (Elem) {Elem.innerHTML = `+${categories[name.value]} ₴`}
     
     } else if (trust == true && !insaid_cost.querySelector(`#${name.value}`)) {
-        categories[name.value] = (+sum.value)
-    
-        let category = document.createElement('div')
-        category.classList.add('category')
-        category.innerHTML = `
-            <h3>${name.value}</h3>
-            <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
-            <h2 id="${name.value}" style="color: #05930e;">+${categories[name.value]} ₴</h2>
-        `
+        categories[name.value] = (+sum.value)  
+        change_earn += 1     
+        let id = `category_earn_${change_earn}`
+
+        let both_category = document.createElement('div')
+        both_category.id = id
+        both_category.style.display = "flex"
+        both_category.style.flexDirection = "column"
+        both_category.innerHTML = `
+            <div class="delete">
+                delete
+            </div>
+            <div class="category">
+                <h3>${name.value}</h3>
+                <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
+                <h2 id="${name.value}" style="color: #05930e;">+${categories[name.value]} ₴</h2>
+            </div>`
 
         earn_total += (+sum_category)
         sum_total += (+sum_category)
-        console.log(sum_total)
         earn_money.innerHTML = `+${earn_total} ₴`
-        insaid_earn.appendChild(category)
+
+        both_category.querySelector('.delete').addEventListener('click', function () {
+            document.getElementById(id).remove()
+
+            earn_total -= categories[category_name]
+            sum_total -= categories[category_name]
+            earn_money.innerHTML = `+${earn_total} ₴`
+            sum_money.innerHTML = `${sum_total} ₴`
+            name_list = name_list.filter(item => item !== category_name)
+        })
+
+        insaid_earn.appendChild(both_category)
+
     } else (
         alert('Цю категорію неможна створити тут!')
     )
@@ -142,6 +185,11 @@ earn_category_create.addEventListener('click', function () {
 
     if (sum_total > 0) {
         sum_money.innerHTML = `+${sum_total} ₴`
+    } else {
+        sum_money.innerHTML = `-${sum_total} ₴`
+    }
+})
+
     } else {
         sum.money.innerHTML = `-${sum_total} ₴`
     }

@@ -59,6 +59,7 @@ window.onload = function () {
         }
     }
 }
+
 let sum_money = document.getElementById('sum_money')
 let cost_money = document.getElementById('cost_money')
 let earn_money = document.getElementById('earn_money')
@@ -122,13 +123,14 @@ cost_category_create.addEventListener('click', function () {
     }
 
     if (name_list.includes(name.value) && !insaid_earn.querySelector(`#${name.value}`)) {
-        categories[name.value] += (+sum.value)
-        cost_total += (+sum_category)
+        categories[name.value] -= (+sum.value)
+        console.log(categories[name.value])
+        cost_total -= (+sum_category)
         sum_total -= (+sum_category)
-        cost_money.innerHTML = `-${cost_total} ₴`
+        cost_money.innerHTML = `${cost_total} ₴`
     
         let Elem = document.getElementById(`${name.value}`)
-        if (Elem) {Elem.innerHTML = `-${categories[name.value]} c`}
+        if (Elem) {Elem.innerHTML = `${categories[name.value]} ₴`}
         storage()
     
     } else if (trust == true  && !insaid_earn.querySelector(`#${name.value}`)) {
@@ -151,11 +153,9 @@ cost_category_create.addEventListener('click', function () {
                 <h2 id="${name.value}" style="color: #ce381a;">${categories[name.value]} ₴</h2>
             </div>`
 
-        console.log(categories[name.value])
-
-        cost_total += (+sum_category)
+        cost_total -= (+sum_category)
         sum_total -= (+sum_category)
-        cost_money.innerHTML = `-${cost_total} ₴`
+        cost_money.innerHTML = `${cost_total} ₴`
         storage()
 
         both_category.querySelector('.delete').addEventListener('click', function () {
@@ -163,10 +163,10 @@ cost_category_create.addEventListener('click', function () {
             if (check == true) {
                 document.getElementById(id).remove()
 
-                cost_total += categories[category_name]
+                cost_total -= categories[category_name]
                 sum_total -= categories[category_name]
                 sum_money.innerHTML = `${sum_total} ₴`
-                cost_money.innerHTML = `-${cost_total} ₴`
+                cost_money.innerHTML = `${cost_total} ₴`
                 name_list = name_list.filter(item => item !== category_name)
                 storage()
             }
@@ -287,6 +287,7 @@ earn_category_create.addEventListener('click', function () {
     localStorage.setItem('cost_total', cost_total)
     localStorage.setItem('earn_total', earn_total)
 })
+
 
     } else {
         sum.money.innerHTML = `-${sum_total} ₴`

@@ -111,10 +111,8 @@ h3 {
   margin-top: 80px;
   border: 5px solid #FF5B00;
   border-radius: 25px;
-  padding: 0.5% 0%;
   background: #A67C52;
   height: 100px;
-  width: 400px;
   align-items: center;
   
 }
@@ -150,3 +148,40 @@ h3 {
   text-align: center;
 
 }
+
+.delete {
+  margin-top: 50px;
+  width: 150px;
+  height: 40px;
+  background: #720303;
+  color: white;
+  border-radius: 20px;
+  border: 3px solid white;
+  text-align: center;
+  padding-top: 5px;
+  transition: .2s;
+  margin-left: 37px;
+}
+
+.delete:hover {
+  background: #970505;
+}
+
+#other {
+  width: 70px; 
+  height: 70px;
+}
+
+#symbol {
+  transition: .3s;
+}
+
+#symbol:hover {
+  transform: scale(1.1);
+}
+
+#symbol_2 {
+  display: flex;
+  flex-direction: row !important;
+}
+

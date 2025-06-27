@@ -7,7 +7,7 @@ window.onload = function () {
         earn_total = +localStorage.getItem('earn_total')
 
         sum_money.innerHTML = sum_total >= 0 ? `+${sum_total} ₴` : `${sum_total} ₴`
-        cost_money.innerHTML = `-${cost_total} ₴`
+        cost_money.innerHTML = `${cost_total} ₴`
         earn_money.innerHTML = `+${earn_total} ₴`
 
         for (let i = 0; i < name_list.length; i++) {
@@ -23,7 +23,7 @@ window.onload = function () {
                         <h3>${name}</h3>
                         <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
                         <h2 id="${name}" style="color: ${Earn_Cost ? '#05930e' : '#ce381a'};">
-                            ${Math.abs(value)} ₴
+                        ${Earn_Cost ? '+' : '-'}${Math.abs(value)}₴
                         </h2>
                     </div>
                 </div>`
@@ -42,8 +42,8 @@ window.onload = function () {
                         earn_money.innerHTML = `+${earn_total} ₴`
                     } else {
                         sum_total -= value
-                        cost_total += value
-                        cost_money.innerHTML = `-${cost_total} ₴`
+                        cost_total -= value
+                        cost_money.innerHTML = `${cost_total} ₴`
 
                     }
                     sum_money.innerHTML = sum_total >= 0 ? `+${sum_total} ₴` : `${sum_total} ₴`
@@ -73,14 +73,18 @@ let earn_category_create = document.getElementById('earn_category_create')
 let cost_category_create = document.getElementById('cost_category_create')
 let insaid_earn = document.getElementById('insaid_earn')
 let insaid_cost = document.getElementById('insaid_cost')
+let symbols = document.getElementById('symbol')
+let other = document.getElementById('other')
 let img = document.getElementById('img')
 let money = document.getElementById('money')
+let symbols_2 = document.getElementById('symbol_2')
 
 let trust = true
 let button_trust = false
 let change_earn = 0
 let change_cost = 0
 cost_category_line.style.display = "none"
+symbols_2.style.display = "none"
 let name_list = []
 let sum_category = 0
 let general_sum = 0
@@ -88,6 +92,7 @@ let categories = {}
 let earn_total = 0
 let cost_total = 0
 let sum_total = 0
+let symbol_chek = 0
 
 function storage() {
     localStorage.setItem('categories', JSON.stringify(categories))
@@ -288,8 +293,16 @@ earn_category_create.addEventListener('click', function () {
     localStorage.setItem('earn_total', earn_total)
 })
 
+symbols.addEventListener('click', function () {
+    symbol_chek += 1
+    if (symbol_chek % 2 != 0) {
+        symbols_2.style.display = "flex"
+        symbols_2.style.justifyContent = "center"
+        symbols_2.style.paddingRight = "200px"
+        symbols_2.style.paddingLeft = "200px"
 
     } else {
-        sum.money.innerHTML = `-${sum_total} ₴`
+        symbols_2.style.display = "none"
+        symbols_2.style.padding = "0% 0%"
     }
 })

@@ -5,7 +5,7 @@ window.onload = function () {
         name_list = JSON.parse(localStorage.getItem('name_list'))
         sum_total = +localStorage.getItem('sum_total')
         cost_total = +localStorage.getItem('cost_total')
-        earn_total = +localStorage.getItem('earn_total')
+        earn_total = +localStorage.getItem('earn_total') 
 
         sum_money.innerHTML = sum_total >= 0 ? `+${sum_total} ₴` : `${sum_total} ₴`
         cost_money.innerHTML = `${cost_total} ₴`

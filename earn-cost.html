@@ -39,7 +39,7 @@
                                     <div style="width: 200px; height: 20px; background: #0f0; margin: 20px; border-radius: 20px; color: #0f0;">
                                         ss
                                     </div>
-                                    <div style="width: 160px; height: 20px; background: #f00; margin: 20px; border-radius: 20px; color: #f00">
+                                    <div style="width: 140px; height: 20px; background: #f00; margin: 20px; border-radius: 20px; color: #f00">
                                         ss
                                     </div>
                                 </div>
@@ -54,7 +54,7 @@
                             </div>
                             <div style="padding: 10px">
                                 <h2 style="color: #cbb138">Досягни своєї мети</h2>
-                                <h2 style="color: #cbb138">як найшвилше!</h2>
+                                <h2 style="color: #cbb138">як найшвидше!</h2>
                             </div>
                         </div>
                     </div>
@@ -65,8 +65,8 @@
                         <h1 id="sum_money" style="padding: 30px 0px;color: #cbb138">0 ₴</h1>
                         <h2 id="earn_money" style="color: #35981a">0 ₴</h2>
                     </div>
-                    <div style="display: flex; border-radius: 20px; text-align: center; margin-right: 450px; margin-top: -80px; justify-content: space-around;">
-                        <div id="symbol" class="box" style="position: absolute; width: 70px; height: 70px; margin-top: -80px;">
+                    <div style="display: flex; border-radius: 20px; margin-bottom: 40px; margin-right: 450px; justify-content: space-around;">
+                        <div id="symbol" class="box" style="position: absolute; width: 70px; height: 70px; margin-top: -80px; text-align: center;">
                             <div> 
                                 <h1 style="color: #ffd722">₴</h1>
                             </div>
@@ -74,9 +74,10 @@
                         <div id="symbol_2" class="box" style="display: flex; flex-direction: row;
                                                               position: absolute; margin-left: 520px; height: 70px; 
                                                               margin-top: -80px; width: 400px;">
-                            <button style="padding: 15px 25px; margin: 5px"><h2>$</h2></button>
-                            <button style="padding: 15px 25px; margin: 5px"><h2>€</h2></button>
-                            <button style="padding: 15px 25px; margin: 5px"><h2>¥</h2></button>
+                            <button id="currency_1" style="padding: 15px 25px; margin: 5px"><h2>$</h2></button>
+                            <button id="currency_2" style="padding: 15px 25px; margin: 5px"><h2>₴</h2></button>
+                            <button id="currency_3" style="padding: 15px 25px; margin: 5px"><h2>€</h2></button>
+                            <button id="currency_4" style="padding: 15px 25px; margin: 5px"><h2>¥</h2></button>
                         </div>
 
                     </div>
@@ -105,7 +106,8 @@
                                 <div style="display: block;">
                                     <label for="category_sum">Сумма*</label>
                                     <div style="padding-top: 10px;">
-                                        <input style="margin-bottom: 20px; font-size: 20px; border-radius: 10px; color: black" type="number" id="sum" required>
+                                        <input style="font-size: 20px; border-radius: 10px; color: black" type="number" id="sum" required>
+                                        <h5 style="margin-bottom: 20px;">^гроші пиши в гривнях</h5>
                                     </div>
                                 </div>
                                 <div style="display: flex; justify-content: space-around;">
@@ -130,7 +132,7 @@
                 </div>
             </div>
         </main>
-        <footer style="background: #222; color: white; padding: 30px 0;">
+        <footer style="background: #292929; color: white; padding: 30px 0;">
             <div style="margin-bottom: 10px; text-align: center;">
               <strong>SmartBalance</strong> © 2025
             </div>

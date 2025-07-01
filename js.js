@@ -5,7 +5,7 @@ window.onload = function () {
         name_list = JSON.parse(localStorage.getItem('name_list'))
         sum_total = +localStorage.getItem('sum_total')
         cost_total = +localStorage.getItem('cost_total')
-        earn_total = +localStorage.getItem('earn_total') 
+        earn_total = +localStorage.getItem('earn_total')
 
         sum_money.innerHTML = sum_total >= 0 ? `+${sum_total} ₴` : `${sum_total} ₴`
         cost_money.innerHTML = `${cost_total} ₴`
@@ -92,6 +92,8 @@ let button_trust = false
 let currency_EUR_chenged = true
 let currency_UAN_chenged = true
 let currency_USD_chenged = true
+let currency_CNY_chenged = true
+let check_currency_changed = false
 let change_earn = 0
 let change_cost = 0
 let name_list = []
@@ -144,7 +146,6 @@ cost_category_create.addEventListener('click', function () {
 
     if (name_list.includes(name.value) && !insaid_earn.querySelector(`#${name.value}`)) {
         categories[name.value] -= (+sum.value)
-        console.log(categories[name.value])
         cost_total -= (+sum_category)
         sum_total -= (+sum_category)
         cost_money.innerHTML = `${cost_total} ₴`
@@ -157,7 +158,23 @@ cost_category_create.addEventListener('click', function () {
         categories[name.value] = (+sum.value)
         categories[name.value] = categories[name.value] * -1
         change_cost += 1
+        let true_category = categories[name.value]  
         let id = `category_cost_${change_cost}`
+        let converted_true_category = true_category
+        let symbol = '₴'
+
+        if (check_currency_changed) {
+            if (!currency_USD_chenged) {
+                converted_true_category = Math.round(true_category / 42)
+                symbol = '$'
+            } else if (!currency_EUR_chenged) {
+                converted_true_category = Math.round(true_category / 48.6)
+                symbol = '€'
+            } else if (!currency_CNY_chenged) {
+                converted_true_category = Math.round(true_category / 5.7)
+                symbol = '¥'
+            }
+        }
 
         let both_category = document.createElement('div')
         both_category.id = id
@@ -170,7 +187,7 @@ cost_category_create.addEventListener('click', function () {
             <div class="category">
                 <h3>${name.value}</h3>
                 <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
-                <h2 id="${name.value}" style="color: #ce381a;">${categories[name.value]} ₴</h2>
+                <h2 id="${name.value}" style="color: #ce381a;">${converted_true_category} ${symbol}</h2>
             </div>`
 
         cost_total -= (+sum_category)
@@ -193,11 +210,11 @@ cost_category_create.addEventListener('click', function () {
         })
 
         insaid_cost.appendChild(both_category)
+        name_list.push(name.value)
+
     } else (
         alert('Цю категорію неможна створити тут!')
     )
-
-    name_list.push(name.value)
 
     name.value = ''
     sum.value = ''
@@ -246,9 +263,25 @@ earn_category_create.addEventListener('click', function () {
         storage()
     
     } else if (trust == true && !insaid_cost.querySelector(`#${name.value}`)) {
-        categories[name.value] = (+sum.value)  
+        categories[name.value] = (+sum.value) 
         change_earn += 1     
+        let true_category = categories[name.value]  
+        let converted_true_category = true_category
         let id = `category_earn_${change_earn}`
+        let symbol = '₴'
+
+        if (check_currency_changed) {
+            if (!currency_USD_chenged) {
+                converted_true_category = Math.round(true_category / 42)
+                symbol = '$'
+            } else if (!currency_EUR_chenged) {
+                converted_true_category = Math.round(true_category / 48.6)
+                symbol = '€'
+            } else if (!currency_CNY_chenged) {
+                converted_true_category = Math.round(true_category / 5.7)
+                symbol = '¥'
+            }
+        }
 
         let both_category = document.createElement('div')
         both_category.id = id
@@ -261,7 +294,7 @@ earn_category_create.addEventListener('click', function () {
             <div class="category">
                 <h3>${name.value}</h3>
                 <img src="image/ChatGPT Image May 31, 2025, 08_09_41 PM.png" width="70px" height="70px">
-                <h2 id="${name.value}" style="color: #05930e;">+${categories[name.value]} ₴</h2>
+                <h2 id="${name.value}" style="color: #05930e;">+${converted_true_category} ${symbol}</h2>
             </div>`
 
         earn_total += (+sum_category)
@@ -284,12 +317,11 @@ earn_category_create.addEventListener('click', function () {
         })
 
         insaid_earn.appendChild(both_category)
+        name_list.push(name.value)
 
     } else (
         alert('Цю категорію неможна створити тут!')
     )
-
-    name_list.push(name.value)
 
     name.value = ''
     sum.value = ''
@@ -328,6 +360,7 @@ symbols.addEventListener('click', function () {
 let new_sum_total = sum_total
 let new_earn_total = earn_total
 let new_cost_total = cost_total
+let currency_list = [currency_UAN_chenged, currency_USD_chenged, currency_EUR_chenged, currency_CNY_chenged]
 
 currency_1.addEventListener('click', function() {
     if (currency_USD_chenged) {
@@ -338,15 +371,22 @@ currency_1.addEventListener('click', function() {
         sum_money.innerHTML = `${new_sum_total} $`
         earn_money.innerHTML = `+${new_earn_total} $`
         cost_money.innerHTML = `${new_cost_total} $`
-        console.log(categories)
+
         for (let i = 0; i < name_list.length; i++) {
-            
+            let plus_or_minus = categories[name_list[i]] >= 0
+            let Elem = document.getElementById(`${name_list[i]}`)
+            let new_category = categories[name_list[i]]
+
+            new_category = Math.round(categories[name_list[i]] / 42) 
+            Elem.innerHTML = `${plus_or_minus ? '+' : ''}${new_category} $`
         }
     }   
 
     currency_EUR_chenged = true
     currency_UAN_chenged = true
+    currency_CNY_chenged = true
     currency_USD_chenged = false
+    check_currency_changed = true
 
 })
 
@@ -359,10 +399,21 @@ currency_2.addEventListener('click', function() {
         sum_money.innerHTML = `${new_sum_total} ₴`
         earn_money.innerHTML = `+${new_earn_total} ₴`
         cost_money.innerHTML = `${new_cost_total} ₴`
+
+        for (let i = 0; i < name_list.length; i++) {
+            let plus_or_minus = categories[name_list[i]] >= 0
+            let Elem = document.getElementById(`${name_list[i]}`)
+            let new_category = categories[name_list[i]]
+
+            new_category = Math.round(categories[name_list[i]]) 
+            Elem.innerHTML = `${plus_or_minus ? '+' : ''}${new_category} ₴`
+        }
     }
     currency_EUR_chenged = true
     currency_USD_chenged = true
+    currency_CNY_chenged = true
     currency_UAN_chenged = false
+    check_currency_changed = true
 })
 
 currency_3.addEventListener('click', function() {
@@ -374,8 +425,45 @@ currency_3.addEventListener('click', function() {
         sum_money.innerHTML = `${new_sum_total} €`
         earn_money.innerHTML = `+${new_earn_total} €`
         cost_money.innerHTML = `${new_cost_total} €`
+
+        for (let i = 0; i < name_list.length; i++) {
+            let plus_or_minus = categories[name_list[i]] >= 0
+            let Elem = document.getElementById(`${name_list[i]}`)
+            let new_category = categories[name_list[i]]
+
+            new_category = Math.round(categories[name_list[i]] / 48.6) 
+            Elem.innerHTML = `${plus_or_minus ? '+' : ''}${new_category} €`
+        }
     }
-    currency_UAN_chenged = true
     currency_USD_chenged = true
+    currency_UAN_chenged = true
+    currency_CNY_chenged = true
     currency_EUR_chenged = false
+    check_currency_changed = true
+})
+
+currency_4.addEventListener('click', function() {
+    if (currency_CNY_chenged) {
+        new_sum_total = Math.round(sum_total / 5.7)
+        new_earn_total = Math.round(earn_total / 5.7)
+        new_cost_total = Math.round(cost_total / 5.7)
+
+        sum_money.innerHTML = `${new_sum_total} ¥`
+        earn_money.innerHTML = `+${new_earn_total} ¥`
+        cost_money.innerHTML = `${new_cost_total} ¥`
+
+        for (let i = 0; i < name_list.length; i++) {
+            let plus_or_minus = categories[name_list[i]] >= 0
+            let Elem = document.getElementById(`${name_list[i]}`)
+            let new_category = categories[name_list[i]]
+
+            new_category = Math.round(categories[name_list[i]] / 5.7) 
+            Elem.innerHTML = `${plus_or_minus ? '+' : ''}${new_category} ¥`
+        }
+    }
+    currency_USD_chenged = true
+    currency_UAN_chenged = true
+    currency_EUR_chenged = true
+    currency_CNY_chenged = false
+    check_currency_changed = true
 })

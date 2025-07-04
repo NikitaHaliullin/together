@@ -116,6 +116,9 @@ let categories = {}
 let earn_total = 0
 let cost_total = 0
 let sum_total = 0
+let new_sum_total = 0
+let new_earn_total = 0
+let new_cost_total = 0
 let symbol_chek = 0
 symbols_2.style.display = "none"
 cost_category_line.style.display = "none"
@@ -192,13 +195,27 @@ cost_category_create.addEventListener('click', function () {
     }
 
     if (name_list.includes(name.value) && !insaid_earn.querySelector(`#${name.value}`)) {
-        categories[name.value] -= (+sum.value)
+        let true_category = categories[category_name]
         cost_total -= (+sum_category)
         sum_total -= (+sum_category)
-        cost_money.innerHTML = `${cost_total} ₴`
+        
+        true_category = check_currency_changed 
+            ? Math.round(categories[category_name] / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
+            : categories[category_name]
+        
+        categories[name.value] -= (+sum.value)
+
+        sum_category = check_currency_changed 
+            ? Math.round(sum.value / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
+            : sum.value
+
+        true_category -= (+sum_category)
+        new_cost_total -= (+sum_category)
+        new_sum_total -= (+sum_category)
+        cost_money.innerHTML = `${new_cost_total} ${symbol}`
     
         let Elem = document.getElementById(`${name.value}`)
-        if (Elem) {Elem.innerHTML = `${categories[name.value]} ₴`}
+        if (Elem) {Elem.innerHTML = `${true_category} ${symbol}`}
         storage()
     
     } else if (trust == true  && !insaid_earn.querySelector(`#${name.value}`)) {
@@ -243,7 +260,7 @@ cost_category_create.addEventListener('click', function () {
             </button>
             <div class="category">
                 <h3>${name.value}</h3>
-                <img src="image/earn_logo.png" width="100px" height="100px">
+                <img src="image/cost_logo.png" width="100px" height="100px">
                 <h2 id="${name.value}" style="color: #ce381a;">${converted_true_category} ${symbol}</h2>
             </div>`
 
@@ -324,17 +341,32 @@ earn_category_create.addEventListener('click', function () {
     }
 
     if (name_list.includes(name.value) && !insaid_cost.querySelector(`#${name.value}`)) {
-        categories[category_name] += (+sum.value)
-        earn_total += (+sum_category)
+        let true_category = categories[category_name]
         sum_total += (+sum_category)
-        earn_money.innerHTML = `+${earn_total} ₴`
+        earn_total += (+sum_category)
+        
+        true_category = check_currency_changed 
+            ? Math.round(categories[category_name] / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
+            : categories[category_name]
+            
+        categories[category_name] += (+sum_category)
+
+        sum_category = check_currency_changed 
+            ? Math.round(sum.value / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
+            : sum.value
+        
+        true_category += (+sum_category)
+        new_earn_total += (+sum_category)
+        new_sum_total += (+sum_category)
+        earn_money.innerHTML = `+${new_earn_total} ${symbol}`
     
         let Elem = document.getElementById(`${name.value}`)
-        if (Elem) {Elem.innerHTML = `+${categories[category_name]} ₴`}
+        if (Elem) {Elem.innerHTML = `+${true_category} ${symbol}`}
         storage()
     
     } else if (trust == true && !insaid_cost.querySelector(`#${name.value}`)) {
         categories[category_name] = (+sum.value) 
+        console.log(categories[category_name])
         change_earn += 1     
         let true_category = categories[category_name]  
         let converted_true_category = true_category
@@ -451,9 +483,9 @@ symbols.addEventListener('click', function () {
 })
 
 //ЗМІНА ВАЛЮТИ 
-let new_sum_total = sum_total
-let new_earn_total = earn_total
-let new_cost_total = cost_total
+new_sum_total = sum_total
+new_earn_total = earn_total
+new_cost_total = cost_total
 let currency_list = [currency_UAN_chenged, currency_USD_chenged, currency_EUR_chenged, currency_CNY_chenged]
 
 currency_1.addEventListener('click', function() {

@@ -18,7 +18,7 @@ header {
   left: 0;
   right: 0;
   top: 0;
-  background-color: #FF5B00;
+  background-color: #ff5223;
   color: white;
   display: flex;
   justify-content: space-between;
@@ -139,7 +139,7 @@ h3 {
   align-items: center;
   width: 180px;
   height: 210px;
-  background: #3a251c;
+  background: #3c1f12;
   color: #cbb138;
   border: 3px solid #FF5B00;
   border-radius: 20px;
@@ -161,6 +161,27 @@ h3 {
   padding-top: 5px;
   transition: .2s;
   margin-left: 37px;
+}
+
+#authorization {
+  width: 600px;
+  height: 430px;
+  border: 3px solid #FF5B00;
+  border-radius: 20px;
+  text-align: center;
+  color: #FF5B00;
+  margin-left: 200px;
+  
+}
+
+#registration_ak {
+  width: 600px;
+  height: 430px;
+  border: 3px solid #FF5B00;
+  border-radius: 20px;
+  text-align: center;
+  color: #FF5B00;
+  margin-right: 200px;
 }
 
 .delete:hover {
@@ -185,3 +206,38 @@ h3 {
   flex-direction: row !important;
 }
 
+#email {
+  margin-bottom: 20px;
+  font-size: 20px; 
+  border-radius: 10px;
+  color: black;
+  width: 350px;
+  height: 40px
+}
+
+#password {
+  margin-bottom: 20px;
+  font-size: 20px; 
+  border-radius: 10px;
+  color: black;
+  width: 350px;
+  height: 40px
+}
+
+label {
+  padding: 10px;
+  color: #FF5B00
+}
+
+#text {
+  transition: .3s;
+  padding: 7px
+}
+
+#text:hover {
+  transform: scale(1.1);
+}
+
+#quit {
+  color: black
+}

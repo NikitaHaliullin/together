@@ -9,19 +9,21 @@ window.onload = function () {
         new_sum_total = +localStorage.getItem('new_sum_total')
         new_earn_total = +localStorage.getItem('new_earn_total')
         new_cost_total = +localStorage.getItem('new_cost_total')
-        symbol = localStorage.getItem('symbol')
-        console.log(symbol)
+        check_currency_changed = localStorage.getItem('check_currency_changed') === 'true'
+        symbol = localStorage.getItem('symbol') || '₴'
 
         sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
-        cost_money.innerHTML = `${new_cost_total} ${symbol}`
+        cost_money.innerHTML = `-${new_cost_total} ${symbol}`
         earn_money.innerHTML = `+${new_earn_total} ${symbol}`
 
         for (let i = 0; i < name_list.length; i++) {
             let name = name_list[i]
-            let value = Math.round(symbol == '$' ? categories[name] / 42 : symbol == '€' ? categories[name] / 48.6 
-                : symbol == '¥' ? categories[name] / 5.7 : categories[name])
+            let value = check_currency_changed 
+                ? Math.round(categories[name] / ( symbol == '$' ? 42 : symbol == '€' ? 48.6 : symbol == '¥' ? 5.7 : 1 ))
+                : categories[name]
+            
 
-            let Earn_Cost = value > 0
+            let Earn_Cost = value >= 0
         
             let block = document.createElement('div')
             block.innerHTML = `
@@ -46,17 +48,31 @@ window.onload = function () {
                 if (check) {
                     block.remove()
 
-                    if (Earn_Cost) {
-                        new_sum_total -= value
-                        new_earn_total -= value
-                        earn_money.innerHTML = `+${new_earn_total} ${symbol}`
-                    } else {
-                        new_sum_total -= value
-                        new_cost_total -= value
-                        cost_money.innerHTML = `${new_cost_total} ${symbol}`
+                    let value = categories[name]
 
+                    if (Earn_Cost) {
+                        earn_total -= value
+                        sum_total -= value
+                    } else {
+                        cost_total -= value
+                        sum_total -= value
                     }
+
+                    new_earn_total = check_currency_changed 
+                        ? Math.round(earn_total / (symbol == '$' ? 42 : symbol == '€' ? 48.6 : symbol == '¥' ? 5.7 : 1))
+                        : earn_total
+                    new_cost_total = check_currency_changed 
+                        ? Math.round(Math.abs(cost_total) / (symbol == '$' ? 42 : symbol == '€' ? 48.6 : symbol == '¥' ? 5.7 : 1))
+                        : Math.abs(cost_total)
+                    new_sum_total = check_currency_changed 
+                        ? Math.round(sum_total / (symbol == '$' ? 42 : symbol == '€' ? 48.6 : symbol == '¥' ? 5.7 : 1))
+                        : sum_total
+
                     sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
+                    earn_money.innerHTML = `+${new_earn_total} ${symbol}`
+                    cost_money.innerHTML = `-${new_cost_total} ${symbol}`
+
+                    name_list = name_list.filter(item => item !== name)
                     delete categories[name]
 
                     localStorage.setItem('categories', JSON.stringify(categories))
@@ -68,6 +84,7 @@ window.onload = function () {
                     localStorage.setItem('new_earn_total', new_earn_total)
                     localStorage.setItem('new_cost_total', new_cost_total)
                     localStorage.setItem('symbol', symbol)
+                    localStorage.setItem('check_currency_changed', check_currency_changed)
                 }
             })
         }
@@ -91,15 +108,18 @@ let insaid_cost = document.getElementById('insaid_cost')
 let currency_1 = document.getElementById('currency_1')
 let currency_2 = document.getElementById('currency_2')
 let currency_3 = document.getElementById('currency_3')
+let currency_4 = document.getElementById('currency_4')
 let symbols = document.getElementById('symbol')
 let other = document.getElementById('other')
 let img = document.getElementById('img')
 let clear = document.getElementById('clear')
 let money = document.getElementById('money')
 let symbols_2 = document.getElementById('symbol_2')
+let left_button = document.getElementById('left_button')
+
 
 //СТВОРЕННЯ ЗМІННИХ
-let symbol = '₴'
+let symbol = localStorage.getItem('symbol') || '₴'
 let trust = true
 let button_trust = false
 let currency_EUR_chenged = true
@@ -134,6 +154,7 @@ function storage() {
     localStorage.setItem('new_earn_total', new_earn_total)
     localStorage.setItem('new_cost_total', new_cost_total)
     localStorage.setItem('symbol', symbol)
+    localStorage.setItem('check_currency_changed', check_currency_changed)
 }
 
 //ЗМІНА СТОРІНКИ З ЗАРОБІТКОМ НА СТОРІНКУ З ВИТРАТАМИ
@@ -178,76 +199,79 @@ clear.addEventListener('click', function () {
     }
 })
 
+left_button.addEventListener('click', function () {
+    
+})
+
 //ЯКЩО СТВОРЮЮТЬ КАТЕГОРІЮ З ВИТРАЧИНИМИ КОШТАМИ
 cost_category_create.addEventListener('click', function () {
+    check_currency_changed = localStorage.getItem('check_currency_changed') === 'true'
+    symbol = localStorage.getItem('symbol') || '₴'
     let name = document.getElementById('name')
     let sum = document.getElementById('sum')
     let category_name = name.value
     let sum_category = sum.value
 
-    if (name.value.length == 0 || sum.value.length == 0) {
-
+    if (category_name.length == 0 || sum_category.length == 0) {
         alert('Заповніть всі поля')
         trust = false
-
     } else {
         trust = true
     }
 
-    if (name_list.includes(name.value) && !insaid_earn.querySelector(`#${name.value}`)) {
+    let converted_sum_category = +sum_category;
+    if (check_currency_changed) {
+        if (symbol === '$') {
+            converted_sum_category = Math.round(+sum_category * 42);
+        } else if (symbol === '€') {
+            converted_sum_category = Math.round(+sum_category * 48.6);
+        } else if (symbol === '¥') {
+            converted_sum_category = Math.round(+sum_category * 5.7);
+        }
+    }
+
+    if (name_list.includes(category_name) && !insaid_earn.querySelector(`#${category_name}`)) {
         let true_category = categories[category_name]
-        cost_total -= (+sum_category)
-        sum_total -= (+sum_category)
-        
+        cost_total -= converted_sum_category
+        sum_total -= converted_sum_category
+        categories[category_name] -= converted_sum_category
+
         true_category = check_currency_changed 
-            ? Math.round(categories[category_name] / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
-            : categories[category_name]
+            ? Math.round(categories[category_name] / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
+            : true_category
         
-        categories[name.value] -= (+sum.value)
+        new_cost_total = check_currency_changed 
+            ? Math.round(Math.abs(cost_total) / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
+            : Math.abs(cost_total)
 
-        sum_category = check_currency_changed 
-            ? Math.round(sum.value / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
-            : sum.value
+        new_sum_total = check_currency_changed 
+            ? Math.round(sum_total / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
+            : sum_total
 
-        true_category -= (+sum_category)
-        new_cost_total -= (+sum_category)
-        new_sum_total -= (+sum_category)
-        cost_money.innerHTML = `${new_cost_total} ${symbol}`
-    
         let Elem = document.getElementById(`${name.value}`)
-        if (Elem) {Elem.innerHTML = `${true_category} ${symbol}`}
+        if (Elem) {Elem.innerHTML = `${true_category >= 0 ? '+' : '-'}${Math.abs(true_category)} ${symbol}`}
+
+        cost_money.innerHTML = `-${new_cost_total} ${symbol}`
+        sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
         storage()
     
     } else if (trust == true  && !insaid_earn.querySelector(`#${name.value}`)) {
-        categories[name.value] = (+sum.value)
-        categories[name.value] = categories[name.value] * -1
+        categories[category_name] = converted_sum_category * -1
         change_cost += 1
-        let true_category = categories[name.value]  
+        let true_category = categories[category_name]  
         let id = `category_cost_${change_cost}`
-        let converted_true_category = true_category
-        let symbol = '₴'
+        let converted_true_category = check_currency_changed 
+            ? Math.round(true_category / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
+            : true_category
 
-        if (check_currency_changed) {
-            if (!currency_USD_chenged) {
-                converted_true_category = Math.round(true_category / 42)
-                symbol = '$'
-            } else if (!currency_EUR_chenged) {
-                converted_true_category = Math.round(true_category / 48.6)
-                symbol = '€'
-            } else if (!currency_CNY_chenged) {
-                converted_true_category = Math.round(true_category / 5.7)
-                symbol = '¥'
-            }
-        }
-        cost_total -= (+sum_category)
-        sum_total -= (+sum_category)
+        cost_total -= converted_sum_category
+        sum_total -= converted_sum_category
         
         new_cost_total = check_currency_changed 
-            ? Math.round(cost_total / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
-            : cost_total
-        
+            ? Math.round(Math.abs(cost_total) / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
+            : Math.abs(cost_total)
         new_sum_total = check_currency_changed 
-            ? Math.round(sum_total / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
+            ? Math.round(sum_total / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
             : sum_total
 
         let both_category = document.createElement('div')
@@ -264,7 +288,8 @@ cost_category_create.addEventListener('click', function () {
                 <h2 id="${name.value}" style="color: #ce381a;">${converted_true_category} ${symbol}</h2>
             </div>`
 
-        cost_money.innerHTML = `${new_cost_total} ${symbol}`
+        cost_money.innerHTML = `-${new_cost_total} ${symbol}`
+        sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
         storage()
 
         both_category.querySelector('.delete').addEventListener('click', function () {
@@ -276,15 +301,15 @@ cost_category_create.addEventListener('click', function () {
                 sum_total += Math.abs(categories[category_name])
         
                 new_cost_total = check_currency_changed 
-                    ? Math.round(cost_total / (!currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1))
-                    : cost_total
+                    ? Math.round(Math.abs(cost_total) / (symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1))
+                    : Math.abs(cost_total)
         
                 new_sum_total = check_currency_changed 
-                    ? Math.round(sum_total / (!currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1))
+                    ? Math.round(sum_total / (symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1))
                     : sum_total
         
                 cost_money.innerHTML = `${new_cost_total} ${symbol}`
-                sum_money.innerHTML = `${sum_total >= 0 ? '+' : ''}${new_sum_total} ${symbol}`
+                sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
         
                 name_list = name_list.filter(item => item !== category_name)
                 delete categories[category_name]
@@ -302,98 +327,76 @@ cost_category_create.addEventListener('click', function () {
     name.value = ''
     sum.value = ''
     storage()
-
-    if (sum_total < 0) {
-        sum_money.innerHTML = `${new_sum_total} ${symbol}`
-        storage()
-    } else {
-        sum_money.innerHTML = `+${new_sum_total} ${symbol}`
-        storage()
-    }
-
-    localStorage.setItem('categories', JSON.stringify(categories))
-    localStorage.setItem('name_list', JSON.stringify(name_list))
-    localStorage.setItem('sum_total', sum_total)
-    localStorage.setItem('cost_total', cost_total)
-    localStorage.setItem('earn_total', earn_total)
-    localStorage.setItem('new_sum_total', new_sum_total)
-    localStorage.setItem('new_earn_total', new_earn_total)
-    localStorage.setItem('new_cost_total', new_cost_total)
-    console.log(symbol)
-    localStorage.setItem('symbol', symbol)
-
 })
 
 //ЯКЩО СТВОРЮЮТЬ КАТЕГОРІЮ З ОТРИМАНИМИ КОШТАМИ
 earn_category_create.addEventListener('click', function () {
+    check_currency_changed = localStorage.getItem('check_currency_changed') === 'true'
+    symbol = localStorage.getItem('symbol') || '₴'
     let name = document.getElementById('name')
     let sum = document.getElementById('sum')
     let category_name = name.value
     let sum_category = sum.value
 
     if (name.value.length == 0 || sum.value.length == 0) {
-
         alert('Заповніть всі поля')
         trust = false
-
     } else {
         trust = true
     }
 
+    let converted_sum_category = +sum_category;
+    if (check_currency_changed) {
+        if (symbol === '$') {
+            converted_sum_category = Math.round(+sum_category * 42);
+        } else if (symbol === '€') {
+            converted_sum_category = Math.round(+sum_category * 48.6);
+        } else if (symbol === '¥') {
+            converted_sum_category = Math.round(+sum_category * 5.7);
+        }
+    }
+
     if (name_list.includes(name.value) && !insaid_cost.querySelector(`#${name.value}`)) {
-        let true_category = categories[category_name]
-        sum_total += (+sum_category)
-        earn_total += (+sum_category)
+        sum_total += converted_sum_category
+        earn_total += converted_sum_category
         
-        true_category = check_currency_changed 
-            ? Math.round(categories[category_name] / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
+        categories[category_name] += converted_sum_category
+
+        let true_category = check_currency_changed 
+            ? Math.round(categories[category_name] / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
             : categories[category_name]
             
-        categories[category_name] += (+sum_category)
+        new_earn_total = check_currency_changed 
+            ? Math.round(earn_total / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
+            : earn_total
+        new_sum_total = check_currency_changed 
+            ? Math.round(sum_total / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
+            : sum_total
 
-        sum_category = check_currency_changed 
-            ? Math.round(sum.value / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
-            : sum.value
-        
-        true_category += (+sum_category)
-        new_earn_total += (+sum_category)
-        new_sum_total += (+sum_category)
-        earn_money.innerHTML = `+${new_earn_total} ${symbol}`
-    
         let Elem = document.getElementById(`${name.value}`)
         if (Elem) {Elem.innerHTML = `+${true_category} ${symbol}`}
+
+        earn_money.innerHTML = `+${new_earn_total} ${symbol}`
+        sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
         storage()
     
     } else if (trust == true && !insaid_cost.querySelector(`#${name.value}`)) {
-        categories[category_name] = (+sum.value) 
-        console.log(categories[category_name])
+        categories[category_name] = converted_sum_category
         change_earn += 1     
         let true_category = categories[category_name]  
-        let converted_true_category = true_category
         let id = `category_earn_${change_earn}`
+        let converted_true_category = check_currency_changed 
+            ? Math.round(true_category / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
+            : true_category
 
-        if (check_currency_changed) {
-            if (!currency_USD_chenged) {
-                converted_true_category = Math.round(true_category / 42)
-                symbol = '$'
-                console.log(new_earn_total)
-            } else if (!currency_EUR_chenged) {
-                converted_true_category = Math.round(true_category / 48.6)
-                symbol = '€'
-            } else if (!currency_CNY_chenged) {
-                converted_true_category = Math.round(true_category / 5.7)
-                symbol = '¥'
-            }
-        }
         earn_total += categories[category_name]
         sum_total += categories[category_name]
         
         new_earn_total = check_currency_changed 
-            ? Math.round(earn_total / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
+            ? Math.round(earn_total / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
             : earn_total
-        
         new_sum_total = check_currency_changed 
-            ? Math.round(sum_total / ( !currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1 ))
+            ? Math.round(sum_total / ( symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1 ))
             : sum_total
 
         let both_category = document.createElement('div')
@@ -411,6 +414,7 @@ earn_category_create.addEventListener('click', function () {
             </div>`
         
         earn_money.innerHTML = `+${new_earn_total} ${symbol}`
+        sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
         storage()
 
         both_category.querySelector('.delete').addEventListener('click', function () {
@@ -418,19 +422,18 @@ earn_category_create.addEventListener('click', function () {
             if (check) {
                 document.getElementById(id).remove()
         
-                earn_total -= Math.abs(categories[category_name])
-                sum_total -= Math.abs(categories[category_name])
+                earn_total -= categories[category_name]
+                sum_total -= categories[category_name]
         
                 new_earn_total = check_currency_changed 
-                    ? Math.round(earn_total / (!currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1))
+                    ? Math.round(earn_total / (symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1))
                     : earn_total
-        
                 new_sum_total = check_currency_changed 
-                    ? Math.round(sum_total / (!currency_USD_chenged ? 42 : !currency_EUR_chenged ? 48.6 : !currency_CNY_chenged ? 5.7 : 1))
+                    ? Math.round(sum_total / (symbol === '$' ? 42 : symbol === '€' ? 48.6 : symbol === '¥' ? 5.7 : 1))
                     : sum_total
         
-                earn_money.innerHTML = `${new_earn_total >= 0 ? '+' : ''}${new_earn_total} ${symbol}`
-                sum_money.innerHTML = `${sum_total >= 0 ? '+' : ''}${new_sum_total} ${symbol}`
+                earn_money.innerHTML = `+${new_earn_total} ${symbol}`
+                sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
         
                 name_list = name_list.filter(item => item !== category_name)
                 delete categories[category_name]
@@ -448,23 +451,6 @@ earn_category_create.addEventListener('click', function () {
     name.value = ''
     sum.value = ''
     storage()
-
-    if (sum_total > 0) {
-        sum_money.innerHTML = `+${new_sum_total} ${symbol}`
-        storage()
-    } else {
-        sum_money.innerHTML = `${new_sum_total} ${symbol}`
-        storage()
-    }
-    localStorage.setItem('categories', JSON.stringify(categories))
-    localStorage.setItem('name_list', JSON.stringify(name_list))
-    localStorage.setItem('sum_total', sum_total)
-    localStorage.setItem('cost_total', cost_total)
-    localStorage.setItem('earn_total', earn_total)
-    localStorage.setItem('new_sum_total', new_sum_total)
-    localStorage.setItem('new_earn_total', new_earn_total)
-    localStorage.setItem('new_cost_total', new_cost_total)
-    localStorage.setItem('symbol', symbol)
 })
 
 // ПРИ НАЖАТТІ НА КНОПКУ ДЛЯ ЗМІНИ ВАЛЮТИ
@@ -475,7 +461,6 @@ symbols.addEventListener('click', function () {
         symbols_2.style.justifyContent = "center"
         symbols_2.style.paddingRight = "200px"
         symbols_2.style.paddingLeft = "200px"
-
     } else {
         symbols_2.style.display = "none"
         symbols_2.style.padding = "0% 0%"
@@ -486,26 +471,24 @@ symbols.addEventListener('click', function () {
 new_sum_total = sum_total
 new_earn_total = earn_total
 new_cost_total = cost_total
-let currency_list = [currency_UAN_chenged, currency_USD_chenged, currency_EUR_chenged, currency_CNY_chenged]
 
 currency_1.addEventListener('click', function() {
     if (currency_USD_chenged) {
         symbol = '$'
+        check_currency_changed = true
         new_sum_total = Math.round(sum_total / 42)
         new_earn_total = Math.round(earn_total / 42)
-        new_cost_total = Math.round(cost_total / 42)
+        new_cost_total = Math.round(Math.abs(cost_total) / 42)
 
-        sum_money.innerHTML = `${new_sum_total > 0 ? '+' : ''}${new_sum_total} $`
-        earn_money.innerHTML = `+${new_earn_total} $`
-        cost_money.innerHTML = `${new_cost_total} $`
+        sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
+        earn_money.innerHTML = `+${new_earn_total} ${symbol}`
+        cost_money.innerHTML = `-${new_cost_total} ${symbol}`
 
         for (let i = 0; i < name_list.length; i++) {
             let plus_or_minus = categories[name_list[i]] >= 0
             let Elem = document.getElementById(`${name_list[i]}`)
-            let new_category = categories[name_list[i]]
-
-            new_category = Math.round(categories[name_list[i]] / 42) 
-            Elem.innerHTML = `${plus_or_minus ? '+' : ''}${new_category} $`
+            let new_category = Math.round(categories[name_list[i]] / 42) 
+            Elem.innerHTML = `${plus_or_minus ? '+' : '-'}${Math.abs(new_category)} ${symbol}`
         }
     }   
 
@@ -513,91 +496,83 @@ currency_1.addEventListener('click', function() {
     currency_UAN_chenged = true
     currency_CNY_chenged = true
     currency_USD_chenged = false
-    check_currency_changed = true
     storage()
-
 })
 
 currency_2.addEventListener('click', function() {
     if (currency_UAN_chenged) {
         symbol = '₴'
+        check_currency_changed = false
         new_sum_total = Math.round(sum_total)
         new_earn_total = Math.round(earn_total)
-        new_cost_total = Math.round(cost_total)
+        new_cost_total = Math.round(Math.abs(cost_total))
 
-        sum_money.innerHTML = `${new_sum_total > 0 ? '+' : ''}${new_sum_total} ₴`
-        earn_money.innerHTML = `+${new_earn_total} ₴`
-        cost_money.innerHTML = `${new_cost_total} ₴`
+        sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
+        earn_money.innerHTML = `+${new_earn_total} ${symbol}`
+        cost_money.innerHTML = `-${new_cost_total} ${symbol}`
 
         for (let i = 0; i < name_list.length; i++) {
             let plus_or_minus = categories[name_list[i]] >= 0
             let Elem = document.getElementById(`${name_list[i]}`)
-            let new_category = categories[name_list[i]]
-
-            new_category = Math.round(categories[name_list[i]]) 
-            Elem.innerHTML = `${plus_or_minus ? '+' : ''}${new_category} ₴`
+            let new_category = Math.round(categories[name_list[i]]) 
+            Elem.innerHTML = `${plus_or_minus ? '+' : '-'}${Math.abs(new_category)} ${symbol}`
         }
     }
     currency_EUR_chenged = true
     currency_USD_chenged = true
     currency_CNY_chenged = true
     currency_UAN_chenged = false
-    check_currency_changed = true
     storage()
 })
 
 currency_3.addEventListener('click', function() {
     if (currency_EUR_chenged) {
         symbol = '€'
+        check_currency_changed = true
         new_sum_total = Math.round(sum_total / 48.6)
         new_earn_total = Math.round(earn_total / 48.6)
-        new_cost_total = Math.round(cost_total / 48.6)
+        new_cost_total = Math.round(Math.abs(cost_total) / 48.6)
 
-        sum_money.innerHTML = `${new_sum_total > 0 ? '+' : ''}${new_sum_total} €`
-        earn_money.innerHTML = `+${new_earn_total} €`
-        cost_money.innerHTML = `${new_cost_total} €`
+        sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
+        earn_money.innerHTML = `+${new_earn_total} ${symbol}`
+        cost_money.innerHTML = `-${new_cost_total} ${symbol}`
 
         for (let i = 0; i < name_list.length; i++) {
             let plus_or_minus = categories[name_list[i]] >= 0
             let Elem = document.getElementById(`${name_list[i]}`)
-            let new_category = categories[name_list[i]]
-
-            new_category = Math.round(categories[name_list[i]] / 48.6) 
-            Elem.innerHTML = `${plus_or_minus ? '+' : ''}${new_category} €`
+            let new_category = Math.round(categories[name_list[i]] / 48.6) 
+            Elem.innerHTML = `${plus_or_minus ? '+' : '-'}${Math.abs(new_category)} ${symbol}`
         }
     }
     currency_USD_chenged = true
     currency_UAN_chenged = true
     currency_CNY_chenged = true
     currency_EUR_chenged = false
-    check_currency_changed = true
     storage()
 })
 
 currency_4.addEventListener('click', function() {
     if (currency_CNY_chenged) {
         symbol = '¥'
+        check_currency_changed = true
         new_sum_total = Math.round(sum_total / 5.7)
         new_earn_total = Math.round(earn_total / 5.7)
-        new_cost_total = Math.round(cost_total / 5.7)
+        new_cost_total = Math.round(Math.abs(cost_total) / 5.7)
 
-        sum_money.innerHTML = `${new_sum_total > 0 ? '+' : ''}${new_sum_total} ¥`
-        earn_money.innerHTML = `+${new_earn_total} ¥`
-        cost_money.innerHTML = `${new_cost_total} ¥`
+        sum_money.innerHTML = new_sum_total >= 0 ? `+${new_sum_total} ${symbol}` : `${new_sum_total} ${symbol}`
+        earn_money.innerHTML = `+${new_earn_total} ${symbol}`
+        cost_money.innerHTML = `-${new_cost_total} ${symbol}`
 
         for (let i = 0; i < name_list.length; i++) {
             let plus_or_minus = categories[name_list[i]] >= 0
             let Elem = document.getElementById(`${name_list[i]}`)
-            let new_category = categories[name_list[i]]
-
-            new_category = Math.round(categories[name_list[i]] / 5.7) 
-            Elem.innerHTML = `${plus_or_minus ? '+' : ''}${new_category} ¥`
+            let new_category = Math.round(categories[name_list[i]] / 5.7) 
+            Elem.innerHTML = `${plus_or_minus ? '+' : '-'}${Math.abs(new_category)} ${symbol}`
         }
     }
     currency_USD_chenged = true
     currency_UAN_chenged = true
     currency_EUR_chenged = true
     currency_CNY_chenged = false
-    check_currency_changed = true
     storage()
 })
